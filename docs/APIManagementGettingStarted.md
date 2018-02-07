@@ -81,7 +81,20 @@ The  [Automations](https://github.dxc.com/Platform-DXC/pdxc-integration/tree/mas
 - Get the Lambda ARN from AWS Console as shown:
 ![Diagram1](./_images/Lambda-ARN.png)
 - Locate the API method which will call Lambda in the API swagger file and add the Lambda ARN value to a custom tag named xDxcIntgLambda as the last tag as shown below: 
-![Diagram1](./_images/swagger-lambda-tag.png)
+````
+"paths": {  
+    "/dxc/demo/helloLambda": {  
+        "post": {  
+            "consumes": [...
+            ],  
+            "parameters": [...  
+            ],  
+            "responses";  {...  
+            },   
+            "xDxcIntgLambda": "arn:aws:lambda:us-east-2:890403726045:function:helloLambda"  
+         }  
+     }  
+````
 - Repeat above 2 steps for each API method which will call Lambda function.
 - Save the swagger file.
 
