@@ -9,16 +9,16 @@ Following are some of the key areas that a developer would need to review initia
 - [API Standards](#api-standards)
 - [Build-A-Thon Specifics](#build-a-thon-specifics)
 - [Define and Deploy an API](#define-and-deploy)
-  - [Check if API Exists](#published-apis1)
+  - [Check if API Already Exists](#published-apis1)
   - [Create Swagger](#swagger-basics)
   - [Swagger Utility](#swagger-utility)
-  - [Check-in Enhanced Swagger JSON](#github-standards)
-  - [Request API to be published](#request-api-publish)
-  - [Request API route configuration](#request-api-route)
+  - [GITHub API Check-In Standards](#github-standards)
+  - [Request an API to be published](#request-api-publish)
+  - [Request an API route](#request-api-route)
   - [Retrieve URL and api-key](#retrieve-url-api-key)
-- [Calling APIs](#calling-api)
+- [Calling an API](#calling-api)
   - [Check if API Exists](#published-apis2)
-  - [View Model](#view-model)
+  - [View API Model](#view-model)
   - [Testing APIs](#testing-api)
   - [Call APIs](#call-apis)
   - [Debug Logs](#debug-logs)
@@ -28,7 +28,7 @@ Following are some of the key areas that a developer would need to review initia
 
 ## <a href="#api-standards" id="api-standards"></a>API Standards
 PDXC API Standards are located at [API Standards](./API-Standards.md).
-These standards are to be used when designing the front end Standard Platform DXC APIs's, and should also be adhered to if DXC has control over the definition of back-end APIs; typical when the end point is an in-house developed application.
+These standards are to be used when designing the front end Standard Platform DXC APIs, and should also be adhered to if DXC has control over the definition of back-end APIs; typical when the end point is an in-house developed application.
 
 [top](#purpose)
 
@@ -39,8 +39,8 @@ During the Build-A-Thon the following will be supported at a minimum
   - For those back-end APIs that need token authentication, this can still be achieved by the consuming application calling through the gateway to get a token, and then sending in the token in the HTTP header for subsequent calls.
   - The API Gateway will forward all HTTP headers, query strings, and resource paths from the API Gateway through to the back-end API.
 - Back-end systems will expose their API's using REST/JSON over HTTPS (more integration options like Lambda and EC2 to come later)
-- The ability to auto generate MOCK services will be built during the Build-A-Thon
-- The ability to route will be built during the Build-A-Thon
+- The ability to auto generate MOCK services
+- The ability to route
 
 [top](#purpose)
 
@@ -60,7 +60,7 @@ For Build-a-thon, the API developer can check if an API already exists by referr
 The direction for the platform DXC program is to develop and deliver RESTful services.  The format for defining an API is Swagger 2.0 in json format.
 The tool of choice for documenting APIs is Swagger Editor. 	
 
-Swagger is an open source framework support by a set of tools for designing, building and documenting RESTful APIs.  Swagger Editor is available both as a desktop version and online through SwaggerHub. Since DXC DevCloud provides a GitHub-based solution for source management, SwaggerHub will not be used. Swagger inherently supports the OpenAPI specifications.  Although the current OpenAPI specification is at version 3.0,Standard Platform DXC APIs must adhere to OpenAPI Verson 2.0.
+Swagger is an open source framework support by a set of tools for designing, building and documenting RESTful APIs.  Swagger Editor is available both as a desktop version and online through SwaggerHub. Since DXC DevCloud provides a GitHub-based solution for source management, SwaggerHub will not be used. Swagger inherently supports the OpenAPI specifications.  Although the current OpenAPI specification is at version 3.0, Standard Platform DXC APIs must adhere to OpenAPI Verson 2.0.
 
 The instructions for the tool standards and link to the installation instructions are located in [Tooling Standards](./API-Standards.md#tooling-standards)
 
@@ -78,10 +78,23 @@ The  [Automations](https://github.dxc.com/Platform-DXC/pdxc-integration/tree/mas
 
 
 >**Note:** For APIs to use AWS Lambda functions as the backend services, need to provide the Lambda ARNs in the swagger file with following steps:
-- Get the Lambda ARN from AWS Console as following snapshot showing:
+- Get the Lambda ARN from AWS Console as shown:
 ![Diagram1](./_images/Lambda-ARN.png)
-- Locate the API method which will call Lambda in the API swagger file and add the Lambda ARN value to a custom tag named xDxcIntgLambda as the last tag like following snapshot showing: 
-![Diagram1](./_images/swagger-lambda-tag.png)
+- Locate the API method which will call Lambda in the API swagger file and add the Lambda ARN value to a custom tag named xDxcIntgLambda as the last tag as shown below: 
+````
+"paths": {  
+    "/dxc/demo/helloLambda": {  
+        "post": {  
+            "consumes": [...
+            ],  
+            "parameters": [...  
+            ],  
+            "responses";  {...  
+            },   
+            "xDxcIntgLambda": "arn:aws:lambda:us-east-2:890403726045:function:helloLambda"  
+         }  
+     }  
+````
 - Repeat above 2 steps for each API method which will call Lambda function.
 - Save the swagger file.
 
@@ -89,7 +102,7 @@ The  [Automations](https://github.dxc.com/Platform-DXC/pdxc-integration/tree/mas
 
 ### <a href="#swagger-utility" id="swagger-utility"></a>Swagger Utility
 
-A utility to assist with validating and extending the OpenAPI definition will continue to evolve.  The utility should be used once the OpenAPI definition has been reviewed and is ready to deploy to the API Gateway and integrate with a target end-point.
+A utility to assist with validating and extending the OpenAPI definition will continue to evolve.  The Swagger utility should be used once the OpenAPI definition has been reviewed and is ready to deploy to the API Gateway and integrate with a target end-point.
 
 A **Postman** project will be made available to call the utility.  The API developer will be able to cut and paste their OpenAPI definition json into Postman and get the utility results.  The OpenAPI definition should be updated based on the results, and iterated through the utility until the result is clean. When the utility returns the enhanced swagger, the result is clean. Otherwise, the utiltiy will return a result with a list that needs to be fixed. This enhanced version of the OpenAPI specification json document should be stored in the GitHub API Repository (refer to the instructions in the next step for how to do this)
 
@@ -110,7 +123,7 @@ The **Platform-DXC/pdxc-integration** GitHub repository must be used to source c
 
 Reference the [API GitHub Naming Standards](API-Standards.md#api-repository) to determine what to name the json file(s).  
 
-Ensure that the `title` in the swagger is the same as the folder name in GitHub but with capitalization.  For example, the folder for automation-api would contain an OpenAPI definition with a `title` of "Automation API".
+Ensure that the `title` in the swagger is the same as the folder name in GitHub but with capitalization.  For example, the folder for automation-api would contain an OpenAPI definition with a `title` of "Automation API".  
 
 Once the API has been added to a new folder under /API-Repository, the name of the API, a brief description and status must be added the README.md file so that it can be seen in the API Catalogue.
 
@@ -158,7 +171,7 @@ The usage of the api-key and how to call the API is documented in the next secti
 
 [top](#purpose)
 
-### <a href="#published-apis2" id="published-apis2"></a>Check if APi Exists
+### <a href="#published-apis2" id="published-apis2"></a>Check if API Exists
 
 For Build-A-Thon, the list of APIs and their status is available at the following location
 [API Catalog](./README.md)
@@ -183,11 +196,11 @@ To determine which model is needed for the request
 
 ![diagrammodel3](./_images/GatewayConsole8.png)
 
-To view the model in the AWS APi Console:
+To view the model in the AWS API Console:
 
 - First select the name of the API
 - Select the `model` option in the left pane under the API hierarchy
-- The center pane lists each `model` used in the selected APi
+- The center pane lists each `model` used in the selected API
 - Select the model name to see the model definition in the right pane
 
 ![diagrammodel3](./_images/GatewayConsole3.png)
@@ -197,13 +210,13 @@ To determine which model is returned in the response
 - Select the name of the API in the left pane
 - Select `Resources` option in the left pane under the API hierarchy
 - The center pane lists each `method`, select the `method` in the resource path that is to be used
-- The right pane displays he flow.  There is no need to select any box, the response model is displayed in the `Method Response` *bottom* left box
+- The right pane displays the flow.  There is no need to select any box, the response model is displayed in the `Method Response` *bottom* left box
 
 [top](#purpose)
 
 ### <a href="#testing-api" id="testing-api"></a>Testing APIs
 
-Consumer Portal's `Try-It-Out` button is meant for light testing only. Heavy debugging should be done using developer tools like POSTMAN.
+Consumer Portal's `Try-It-Out` button is meant for light testing only. Heavy debugging should be done using developer tools like POSTMAN.  
 
 Primary tool of choice for testing API calls is POSTMAN.
 
@@ -216,7 +229,7 @@ POSTMAN can be downloaded from https://www.getpostman.com/postman.
 ### <a href="#call-apis" id="call-apis"></a>Call APIs
 For build-a-thon, the consumers should call the published APIs with no authentication, however api-key must be sent along with the UR.
 
-Each API will have a unique api-key which must be passed in as an HTTP header.  The api-key for any api can be found on Sharepoint The base URL (servername part of the URL) along with the api-key will be documented in Sharepoint https://dxcportal.sharepoint.com/sites/PlatformDXCEnablement/pdxcintegration/Shared%20Documents/Working%20Folder%20-%20Technical/Platform%20DXC%20API%20Gateway%20api-keys.xlsx  
+Each API will have a unique api-key which must be passed in as an HTTP header.  The api-key for any api can be found on Sharepoint. The base URL (servername part of the URL) along with the api-key will be documented in Sharepoint https://dxcportal.sharepoint.com/sites/PlatformDXCEnablement/pdxcintegration/Shared%20Documents/Working%20Folder%20-%20Technical/Platform%20DXC%20API%20Gateway%20api-keys.xlsx  
 
 HTTP header name is x-api-key.  Below is a sample format for the HTTP header with a sample value
 ```
